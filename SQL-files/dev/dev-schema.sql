@@ -20,8 +20,8 @@ CREATE TABLE budget (
     user_id INT,
     budget_name VARCHAR(128),
     amount DOUBLE,
-    startDate INT,
-    endDate INT,
+    startDate DATE,
+    endDate DATE,
     PRIMARY KEY (budget_id),
     FOREIGN KEY (user_id) REFERENCES user(user_id)
 );
@@ -45,7 +45,7 @@ CREATE TABLE transaction (
     transaction_id INT AUTO_INCREMENT,
     category_id INT,
     account_id INT,
-    date INT,
+    date DATE,
     notes VARCHAR(128),
     amount DOUBLE,
     PRIMARY KEY (transaction_id),
@@ -54,11 +54,39 @@ CREATE TABLE transaction (
 );
 
 -- Creating user views
+-- MonthlySpendingReport view
 -- CREATE VIEW AS MonthlySpendingReport
 -- ;
 
+-- UserBudgetReport view
 -- CREATE VIEW AS UserBudgetReport
 -- ;
 
--- CREATE VIEW AS NetWorthBudget
--- ;
+-- NetWorthBudget view
+CREATE VIEW AS NetWorthBudget
+SELECT *, CURRENT_DATE() as date
+FROM (
+SELECT x.user_id, SUM(y.balance) - SUM(z.amount) as net_worth
+FROM user x
+JOIN account y
+ON x.user_id = y.user_id
+JOIN transaction z
+ON y.account_id = z.account_id
+WHERE balance >= 0
+GROUP BY user_id 
+) zero_and_above
+
+UNION
+
+SELECT *, CURRENT_DATE() as date
+FROM (
+SELECT x.user_id, SUM(y.balance) + SUM(z.amount) as net_worth
+FROM user x
+JOIN account y
+ON x.user_id = y.user_id
+JOIN transaction z
+ON y.account_id = z.account_id
+WHERE balance < 0
+GROUP BY user_id 
+) below_zero
+ORDER BY user_id;
