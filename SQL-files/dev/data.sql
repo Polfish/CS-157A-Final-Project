@@ -13,6 +13,7 @@ VALUES
 ((SELECT user_id FROM user WHERE username = 'rainy'), 'Paying off Student Loan', 107382, '2021-12-21', '2187-11-21'),
 ((SELECT user_id FROM user WHERE username = 'bob-ffa'), 'Grocery shopping', 10, '2021-05-01', '2021-05-08'),
 ((SELECT user_id FROM user WHERE username = 'e'), 'Anything entertainment', 800, '2020-08-01', '2020-08-31'),
+((SELECT user_id FROM user WHERE username = 'e'), 'Anything entertainment', 1000, '2020-09-01', '2020-09-30'),
 ((SELECT user_id FROM user WHERE username = 'bob-ffa'), 'Computer parts', 1000000, '2021-12-08', '2021-12-09');
 
 -- Account table

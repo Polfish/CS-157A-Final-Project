@@ -55,18 +55,30 @@ CREATE TABLE transaction (
 
 -- Creating user views
 -- MonthlySpendingReport view
--- CREATE VIEW AS MonthlySpendingReport
--- ;
+CREATE VIEW monthly_spending_report AS
+SELECT x.user_id, x.username, z.amount, w.category_name, EXTRACT(YEAR_MONTH FROM z.date) as month
+FROM user x
+JOIN account y
+ON x.user_id = y.user_id
+JOIN transaction z
+ON y.account_id = z.account_id
+JOIN category w
+ON z.category_id = w.category_id
+GROUP BY x.user_id, z.amount, month, w.category_name
+ORDER BY x.user_id;
 
 -- UserBudgetReport view
--- CREATE VIEW AS UserBudgetReport
--- ;
+CREATE VIEW user_budget_report AS
+SELECT x.user_id, x.username, y.budget_name, amount, startDate, endDate
+FROM user x
+JOIN budget y
+ON x.user_id = y.user_id;
 
 -- NetWorthBudget view
-CREATE VIEW AS NetWorthBudget
+CREATE VIEW net_worth_report AS
 SELECT *, CURRENT_DATE() as date
 FROM (
-SELECT x.user_id, SUM(y.balance) - SUM(z.amount) as net_worth
+SELECT x.user_id, x.username, SUM(y.balance) - SUM(z.amount) as net_worth
 FROM user x
 JOIN account y
 ON x.user_id = y.user_id
@@ -80,7 +92,7 @@ UNION
 
 SELECT *, CURRENT_DATE() as date
 FROM (
-SELECT x.user_id, SUM(y.balance) + SUM(z.amount) as net_worth
+SELECT x.user_id, x.username, SUM(y.balance) + SUM(z.amount) as net_worth
 FROM user x
 JOIN account y
 ON x.user_id = y.user_id
