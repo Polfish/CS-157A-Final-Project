@@ -3,11 +3,14 @@ version: '3.8'
 
 services:
   db:
+    build: .
     image: polfish/finance-tracker-db
     restart: always
     volumes: 
       - db-config:/etc/mysql
       - db-data:/var/lib/mysql
+    ports:
+      - 3306:3306
 
 volumes:
     db-config:
